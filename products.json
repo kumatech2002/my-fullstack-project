@@ -1,0 +1,63 @@
+<?php
+/**
+ * Run this script once to automatically assign categories
+ * to all products in products.json.
+ *
+ * Usage:
+ *   php scripts/add_categories.php
+ */
+
+$path = __DIR__ . '/../products.json';
+
+if (!file_exists($path)) {
+    die("ERROR: products.json not found.\n");
+}
+
+$json = file_get_contents($path);
+$products = json_decode($json, true);
+
+if ($products === null) {
+    die("ERROR: Failed to decode JSON. Check for syntax errors.\n");
+}
+
+echo "Updating product categories...\n";
+
+// 🔥 CATEGORY RULES (edit if needed)
+$rules = [
+    "Women" => ["dress", "skirt", "gown", "blouse", "heel", "heels", "ladies", "women"],
+    "Men" => ["shirt", "t-shirt", "suit", "trouser", "jean", "men", "male"],
+    "Kids" => ["kid", "children", "child", "boy", "girl", "infant"],
+    "Shoes" => ["shoe", "sneaker", "boots", "sandals"],
+    "Bags" => ["bag", "backpack", "handbag", "purse"],
+    "Accessories" => ["belt", "watch", "cap", "hat", "sunglass", "jewelry"],
+    "Unisex" => ["unisex"]
+];
+
+// Fallback
+$defaultCategory = "Uncategorized";
+
+// Assign categories
+foreach ($products as $key => &$product) {
+    $name = strtolower($product['name'] ?? "");
+    $categoryFound = false;
+
+    foreach ($rules as $category => $keywords) {
+        foreach ($keywords as $word) {
+            if (strpos($name, $word) !== false) {
+                $product['category'] = $category;
+                $categoryFound = true;
+                break 2;
+            }
+        }
+    }
+
+    if (!$categoryFound) {
+        $product['category'] = $defaultCategory;
+    }
+
+    echo "✔ {$product['name']} → {$product['category']}\n";
+}
+
+file_put_contents($path, json_encode($products, JSON_PRETTY_PRINT));
+
+echo "\nDONE! products.json updated successfully.\n";

@@ -1,64 +1,49 @@
+
+<?php
+session_start();
+?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Naprose Fashion - Home</title>
-    <style>
-        body { 
-            font-family: Arial; 
-            text-align: center; 
-            padding: 50px; 
-            background: #f5f5f5;
-        }
-        .welcome {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .btn {
-            background: #e8c4b8;
-            color: #2c2c2c;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-            margin: 10px;
-        }
-        .cart-link {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #e8c4b8;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: #2c2c2c;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naprose Fashion</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">Naprose Fashion</div>
+    <div class="menu-toggle" id="mobile-menu">&#9776;</div>
+    <ul class="nav-links">
+      <li><a href="index.php">Home</a></li>
+      <li><a href="product.php">Products</a></li>
+      <li><a href="cart.php">Cart</a></li>
+    </ul>
+  </nav>
+
+  <!-- Search -->
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search products...">
+  </div>
+
+  <!-- Product Grid -->
+  <div class="product-grid">
     <?php
-    session_start();
-    $cart_count = 0;
-    if (isset($_SESSION['cart'])) {
-        $cart_count = array_sum($_SESSION['cart']);
-    }
-    if ($cart_count > 0) {
-        echo "<a href='cart.php' class='cart-link'>🛒 Cart ($cart_count)</a>";
-    }
+    // Example: load products from JSON file
+    $products = json_decode(file_get_contents('products.json'), true);
+    foreach($products as $product):
     ?>
-    
-    <div class="welcome">
-        <h1>🛍️ Welcome to Naprose Fashion!</h1>
-        <p>Your premium fashion destination</p>
-        
-        <div style="margin: 30px 0;">
-            <a href="products.php" class="btn">View Products</a>
-            <a href="cart.php" class="btn">View Cart</a>
-            <a href="setup.php" class="btn">Setup Database</a>
-        </div>
-    </div>
+      <div class="product-card">
+        <img src="<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>">
+        <h3 class="product-title"><?php echo $product['name']; ?></h3>
+        <p class="product-price">$<?php echo $product['price']; ?></p>
+        <button class="add-to-cart" data-id="<?php echo $product['id']; ?>">Add to Cart</button>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
