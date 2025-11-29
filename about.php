@@ -1,3 +1,5 @@
+
+<?php include 'header.php'; ?>
 <?php
 // about.php
 ?>
